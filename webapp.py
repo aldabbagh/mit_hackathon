@@ -8,18 +8,87 @@ import plotly.graph_objects as go
 title = "Closing The Chronically Homeless Housing Gap in Massachusetts"
 st.title(title)
 
+st.header("Current Situation")
+demographic_data = pd.read_excel("current_situation.xls")
+gender_list = list(demographic_data.columns)[3:9]
+hispanic_list = list(demographic_data.columns)[9:15]
+white_list = list(demographic_data.columns)[15:]
+
+#Gender
+gender_filter = st.multiselect("Select a demographic or multiple", gender_list)
+
+figA = go.Figure()
+color_id = 0
+for demo in gender_filter:
+    figA.add_traces(
+        go.Bar(x=demographic_data["County"], y=demographic_data[demo], name=demo)
+    )
+    color_id+=1
+
+figA.update_layout(
+    title = {
+        'text': "Demographics by Gender",
+        'y':0.9,
+        'x':0.5,
+        'xanchor': 'center',
+        'yanchor': 'top'}
+)
+st.plotly_chart(figA, use_container_width=True)
+
+#hispanic
+hispanic_filter = st.multiselect("Select a demographic or multiple", hispanic_list)
+
+figB = go.Figure()
+color_id = 0
+for demo in hispanic_filter:
+    figB.add_traces(
+        go.Bar(x=demographic_data["County"], y=demographic_data[demo], name=demo)
+    )
+    color_id+=1
+
+figB.update_layout(
+    title = {
+        'text': "Demographics Hispanic, Latino, Neither",
+        'y':0.9,
+        'x':0.5,
+        'xanchor': 'center',
+        'yanchor': 'top'}
+)
+st.plotly_chart(figB, use_container_width=True)
+
+#white
+white_filter = st.multiselect("Select a demographic or multiple", white_list)
+
+figC = go.Figure()
+color_id = 0
+for demo in white_filter:
+    figC.add_traces(
+        go.Bar(x=demographic_data["County"], y=demographic_data[demo], name=demo)
+    )
+    color_id+=1
+
+figC.update_layout(
+    title = {
+        'text': "Demographics White, African American, Neither",
+        'y':0.9,
+        'x':0.5,
+        'xanchor': 'center',
+        'yanchor': 'top'}
+)
+st.plotly_chart(figC, use_container_width=True)
+
 st.header("Model Inputs")
 turnover_rate = st.slider(label="Turn over rate", min_value=0.0, max_value=1.0, value=0.2)
 added_units = st.slider(label="Added Units per Year", min_value=300, max_value=20000, value=1500)
 unit_effectiveness = st.slider(label="Unit Effectiveness", min_value=0.2, max_value=1.0, value=0.43)
-cost_per_unit = st.text_input(label="Cost per Unit ($)")
+cost_per_unit = st.text_input(label="Cost per Unit ($)", value=50000)
 
-st.header("Model Outputs")
-st.caption("Total budget ($)")
 total_budget = float(cost_per_unit)*added_units
-st.write(total_budget)
 
-first_future_year = 2021
+
+
+
+first_future_year = 2022
 
 # Read and process data
 data = pd.read_excel("supply_data.xls")
@@ -46,6 +115,12 @@ for i in range(len(chart1_data)):
 
 chart1_data["delta"] = chart1_data["delta"].astype(float)
 
+st.header("Model Outputs")
+# Main Outputs
+col1, col2, col3 = st.columns(3)
+col1.metric(label="Total Budget",value=str(total_budget/1000000)+" $M")
+col2.metric(label="Required New Units", value=str(added_units)+ " Units")
+col3.metric(label="Unit Surplus/Deficit by 2026", value=str(int(chart1_data["delta"].values[-1]))+" Units")
 
 
 # Supply and Demand
@@ -71,9 +146,12 @@ fig.update_layout(
 st.plotly_chart(fig, use_container_width=True)
 
 # Shortage graph
+remaining_homeless = (-1.0)*chart1_data['delta']
+
+remaining_homeless[remaining_homeless < 0] = 0
 fig2 = go.Figure()
 fig2.add_traces(
-    go.Scatter(x=chart1_data['year'], y = chart1_data['delta'], mode = 'lines', line=dict(color=colors[0]), name="Shortage")
+    go.Scatter(x=chart1_data['year'], y = remaining_homeless, mode = 'lines', line=dict(color=colors[0]), name="Shortage")
 )
 
 fig2.update_layout(
