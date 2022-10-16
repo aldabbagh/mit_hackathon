@@ -17,13 +17,11 @@ white_list = list(demographic_data.columns)[15:]
 
 st.header("Forecasting Model")
 turnover_rate = st.slider(label="Turn over rate", min_value=0.0, max_value=1.0, value=0.2)
-added_units = st.slider(label="Added Units per Year", min_value=300, max_value=3000, value=2547)
+added_units = st.slider(label="Added Units per Year", min_value=300, max_value=3000, value=2573)
 unit_effectiveness = st.slider(label="1 unit of housing reduces homelessness by", min_value=0.2, max_value=1.0, value=0.43)
 cost_per_unit = st.text_input(label="Cost per Unit ($)", value=50000)
 
 total_budget = float(cost_per_unit)*added_units
-
-
 
 
 first_future_year = 2022
@@ -53,7 +51,7 @@ for i in range(len(chart1_data)):
 
 chart1_data["delta"] = chart1_data["delta"].astype(float)
 
-st.header("Model Outputs")
+st.header("How many additional housing opportunities are needed to reach (Functional Zero) by 2030?")
 # Main Outputs
 col1, col2, col3 = st.columns(3)
 col1.metric(label="Total Annual Budget",value=str(total_budget/1000000)+" $M")
@@ -65,17 +63,17 @@ col3.metric(label="Unit Surplus/Deficit by 2026", value=str(int(chart1_data["del
 colors = px.colors.qualitative.Plotly
 fig = go.Figure()
 fig.add_traces(
-    go.Scatter(x=chart1_data['year'], y = chart1_data['demand'], mode = 'lines', line=dict(color=colors[0]), name="Demand")
+    go.Scatter(x=chart1_data['year'], y = chart1_data['demand'], mode = 'lines', line=dict(color=colors[0]), name="People falling into CH")
 )
 fig.add_traces(
-    go.Scatter(x=chart1_data['year'], y = chart1_data['number_of_beds_available'], mode = 'lines', line=dict(color=colors[1]), name="Supply")
+    go.Scatter(x=chart1_data['year'], y = chart1_data['number_of_beds_available'], mode = 'lines', line=dict(color=colors[1]), name="Housing Available for CH")
 )
 fig.add_traces(
-    go.Bar(x=chart1_data['year'], y=chart1_data['delta'], name="Surplus")
+    go.Bar(x=chart1_data['year'], y=chart1_data['delta'], name="Housing shortage/surplus")
 )
 fig.update_layout(
     title = {
-        'text': "Housing Supply and Demand",
+        'text': "Housing for Chronic Homelessness (CH)",
         'y':0.9,
         'x':0.5,
         'xanchor': 'center',
@@ -94,7 +92,7 @@ fig2.add_traces(
 
 fig2.update_layout(
     title = {
-        'text': "Number of Chronically Homeless Individuals Without A Bed",
+        'text': "Number of Chronically Homeless Individuals Without Permanent Housing",
         'y':0.9,
         'x':0.5,
         'xanchor': 'center',
