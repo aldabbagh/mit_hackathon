@@ -77,9 +77,9 @@ figC.update_layout(
 )
 st.plotly_chart(figC, use_container_width=True)
 
-st.header("Model Inputs")
+st.header("Forecasting Model")
 turnover_rate = st.slider(label="Turn over rate", min_value=0.0, max_value=1.0, value=0.2)
-added_units = st.slider(label="Added Units per Year", min_value=300, max_value=20000, value=1500)
+added_units = st.slider(label="Added Units per Year", min_value=300, max_value=3000, value=2547)
 unit_effectiveness = st.slider(label="Unit Effectiveness", min_value=0.2, max_value=1.0, value=0.43)
 cost_per_unit = st.text_input(label="Cost per Unit ($)", value=50000)
 
@@ -118,8 +118,8 @@ chart1_data["delta"] = chart1_data["delta"].astype(float)
 st.header("Model Outputs")
 # Main Outputs
 col1, col2, col3 = st.columns(3)
-col1.metric(label="Total Budget",value=str(total_budget/1000000)+" $M")
-col2.metric(label="Required New Units", value=str(added_units)+ " Units")
+col1.metric(label="Total Annual Budget",value=str(total_budget/1000000)+" $M")
+col2.metric(label="New Added Units", value=str(added_units)+ " Units")
 col3.metric(label="Unit Surplus/Deficit by 2026", value=str(int(chart1_data["delta"].values[-1]))+" Units")
 
 
