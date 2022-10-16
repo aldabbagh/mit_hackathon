@@ -51,7 +51,7 @@ for i in range(len(chart1_data)):
 
 chart1_data["delta"] = chart1_data["delta"].astype(float)
 
-st.header("How many additional housing opportunities are needed to reach (Functional Zero) by 2030?")
+st.header('How many additional housing opportunities are needed to reach "Functional Zero" by 2030?')
 # Main Outputs
 col1, col2, col3 = st.columns(3)
 col1.metric(label="Total Annual Budget",value=str(total_budget/1000000)+" $M")
